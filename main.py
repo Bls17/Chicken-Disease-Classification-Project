@@ -1,15 +1,30 @@
 from src.cnnClassifier.pipeline.data_ingestion_pipeline import (
     DataIngestionTrainingPippeline,
 )
+from src.cnnClassifier.pipeline.prep_base_model_pipeline import (
+    PrepareBaseModelTrainingPipeline,
+)
 from src.cnnClassifier import logger
 
 
 STAGE_NAME = "Data Ingestion Stage"
 
-if __name__ == "__main__":
-    try:
-        data_ingestion = DataIngestionTrainingPippeline()
-        data_ingestion.initiate_data_ingestion()
-        logger.info(f"Stage {STAGE_NAME} completed")
-    except Exception as e:
-        raise logger.info(e)
+
+try:
+    data_ingestion = DataIngestionTrainingPippeline()
+    data_ingestion.initiate_data_ingestion()
+    logger.info(f"Stage {STAGE_NAME} completed")
+except Exception as e:
+    raise logger.info(e)
+
+
+STAGE_NAME = "Prepare base model"
+try:
+    logger.info(f"*******************")
+    logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+    prepare_base_model = PrepareBaseModelTrainingPipeline()
+    prepare_base_model.initiate_base_model()
+    logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+except Exception as e:
+    logger.exception(e)
+    raise e
