@@ -1,0 +1,37 @@
+stages:
+  data_ingestion:
+    cmd: PYTHONPATH=. python src/cnnClassifier/pipeline/data_ingestion_pipeline.py
+    deps:
+      - src/cnnClassifier/pipeline/data_ingestion_pipeline.py
+      - config/config.yaml
+    outs:
+      - artifacts/data_ingestion/Chicken-fecal-images
+
+  prepare_base_model:
+    cmd: PYTHONPATH=. python src/cnnClassifier/pipeline/prep_base_model_pipeline.py
+    deps:
+      - src/cnnClassifier/pipeline/prep_base_model_pipeline.py
+      - config/config.yaml
+    outs:
+      - artifacts/prepare_base_model
+
+  training:
+    cmd: PYTHONPATH=. python src/cnnClassifier/pipeline/training_pipeline.py
+    deps:
+      - src/cnnClassifier/pipeline/training_pipeline.py
+      - src/cnnClassifier/components/prepare_callbacks.py
+      - config/config.yaml
+      - artifacts/data_ingestion/Chicken-fecal-images
+      - artifacts/prepare_base_model
+    outs:
+      - artifacts/training/model.keras
+
+  evaluation:
+    cmd: PYTHONPATH=. python src/cnnClassifier/pipeline/model_evaluation_pipeline.py
+    deps:
+      - src/cnnClassifier/pipeline/model_evaluation_pipeline.py
+      - config/config.yaml
+      - artifacts/data_ingestion/Chicken-fecal-images
+      - artifacts/training/model.keras
+    outs:
+      - scores.json
